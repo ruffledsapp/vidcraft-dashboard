@@ -5,14 +5,25 @@ import { useNavigate } from "react-router-dom";
 import { Mic } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
+// Add type declaration for Web Speech API
+declare global {
+  interface Window {
+    webkitSpeechRecognition: any;
+    SpeechRecognition: any;
+  }
+}
+
+const DEFAULT_VIDEO = "https://www.youtube.com/watch?v=vsMydMDi3rI"; // Frank Abagnale Google Talk
+
 export const VideoInput = () => {
-  const [videoUrl, setVideoUrl] = useState("");
+  const [videoUrl, setVideoUrl] = useState(DEFAULT_VIDEO);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (videoUrl) {
+      console.log("Navigating to dashboard with URL:", videoUrl);
       navigate(`/dashboard?url=${encodeURIComponent(videoUrl)}`);
     }
   };
