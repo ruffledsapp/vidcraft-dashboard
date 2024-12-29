@@ -9,7 +9,48 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      video_analyses: {
+        Row: {
+          concept_breakdown_result: Json | null
+          created_at: string | null
+          demographics_result: Json | null
+          id: string
+          market_share_result: Json | null
+          modules_selected: string[]
+          status: string
+          user_id: string | null
+          video_essence_result: Json | null
+          video_overview_result: Json | null
+          video_url: string
+        }
+        Insert: {
+          concept_breakdown_result?: Json | null
+          created_at?: string | null
+          demographics_result?: Json | null
+          id?: string
+          market_share_result?: Json | null
+          modules_selected?: string[]
+          status?: string
+          user_id?: string | null
+          video_essence_result?: Json | null
+          video_overview_result?: Json | null
+          video_url: string
+        }
+        Update: {
+          concept_breakdown_result?: Json | null
+          created_at?: string | null
+          demographics_result?: Json | null
+          id?: string
+          market_share_result?: Json | null
+          modules_selected?: string[]
+          status?: string
+          user_id?: string | null
+          video_essence_result?: Json | null
+          video_overview_result?: Json | null
+          video_url?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
