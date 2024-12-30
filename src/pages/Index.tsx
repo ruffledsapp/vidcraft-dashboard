@@ -2,6 +2,7 @@ import { VideoInput } from "@/components/VideoInput";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FloatingTitles from "@/components/FloatingTitles";
+import { AnalysisHistory } from "@/components/AnalysisHistory";
 import { useState } from "react";
 
 const Index = () => {
@@ -21,6 +22,7 @@ const Index = () => {
         <div className="container mx-auto flex flex-col items-center gap-12 relative z-10">
           <VideoInput />
           <FloatingTitles onTitleClick={(title) => setVideoUrl(title)} />
+          <AnalysisHistory />
         </div>
       </div>
       <Footer />
