@@ -92,13 +92,13 @@ const StatusBadge = ({ status }: { status: string }) => {
       case "completed":
         return {
           label: "Completed",
-          variant: "success" as const,
+          variant: "secondary" as const,
           icon: CheckCircle2,
         };
       case "failed":
         return {
-          label: "Failed",
-          variant: "destructive" as const,
+          label: "destructive" as const,
+          variant: "destructive",
           icon: XCircle,
         };
       default:
