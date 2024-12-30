@@ -97,8 +97,8 @@ const StatusBadge = ({ status }: { status: string }) => {
         };
       case "failed":
         return {
-          label: "destructive" as const,
-          variant: "destructive",
+          label: "Failed",
+          variant: "destructive" as const,
           icon: XCircle,
         };
       default:

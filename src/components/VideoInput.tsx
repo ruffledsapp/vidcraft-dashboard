@@ -4,8 +4,9 @@ import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { Mic } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { AuthOverlay } from "./AuthOverlay";
+import { useSession } from "@supabase/auth-helpers-react";
 
-// Add type declaration for Web Speech API
 declare global {
   interface Window {
     webkitSpeechRecognition: any;
@@ -13,18 +14,24 @@ declare global {
   }
 }
 
-const DEFAULT_VIDEO = "https://www.youtube.com/watch?v=vsMydMDi3rI"; // Frank Abagnale Google Talk
+const DEFAULT_VIDEO = "https://www.youtube.com/watch?v=vsMydMDi3rI";
 
 export const VideoInput = () => {
   const [videoUrl, setVideoUrl] = useState(DEFAULT_VIDEO);
+  const [showPreview, setShowPreview] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const session = useSession();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (videoUrl) {
-      console.log("Navigating to dashboard with URL:", videoUrl);
-      navigate(`/dashboard?url=${encodeURIComponent(videoUrl)}`);
+      if (session) {
+        console.log("Navigating to dashboard with URL:", videoUrl);
+        navigate(`/dashboard?url=${encodeURIComponent(videoUrl)}`);
+      } else {
+        setShowPreview(true);
+      }
     }
   };
 
@@ -57,7 +64,7 @@ export const VideoInput = () => {
   };
 
   return (
-    <div className="w-full max-w-3xl space-y-8 animate-fade-in">
+    <div className="w-full max-w-3xl space-y-8 animate-fade-in relative">
       <h1 className="text-5xl font-bold text-center mb-8 bg-gradient-to-r from-[#9b87f5] to-[#F97316] bg-clip-text text-transparent">
         VideoSich
       </h1>
@@ -84,6 +91,7 @@ export const VideoInput = () => {
           </Button>
         </div>
       </form>
+      {showPreview && !session && <AuthOverlay />}
     </div>
   );
 };
