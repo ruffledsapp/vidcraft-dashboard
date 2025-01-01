@@ -41,19 +41,22 @@ export const VideoInput = () => {
       const recognition = new SpeechRecognitionImpl();
       recognition.lang = "en-US";
       
-      recognition.onresult = (event: SpeechRecognitionResultEvent) => {
-        const transcript = event.results[0][0].transcript;
-        setVideoUrl(transcript);
-        toast({
-          title: "Voice Input Received",
-          description: "Your speech has been converted to text!",
-        });
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
+        const lastResult = event.results[event.results.length - 1];
+        if (lastResult && lastResult[0]) {
+          const transcript = lastResult[0].transcript;
+          setVideoUrl(transcript);
+          toast({
+            title: "Voice Input Received",
+            description: "Your speech has been converted to text!",
+          });
+        }
       };
 
       recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
         toast({
           title: "Error",
-          description: "Could not access microphone. Please check permissions.",
+          description: `Speech recognition error: ${event.error}`,
           variant: "destructive",
         });
       };
