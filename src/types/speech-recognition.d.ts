@@ -1,7 +1,6 @@
-interface SpeechRecognitionResultList {
-  length: number;
-  item(index: number): SpeechRecognitionResult;
-  [index: number]: SpeechRecognitionResult;
+interface SpeechRecognitionAlternative {
+  transcript: string;
+  confidence: number;
 }
 
 interface SpeechRecognitionResult {
@@ -11,19 +10,20 @@ interface SpeechRecognitionResult {
   [index: number]: SpeechRecognitionAlternative;
 }
 
-interface SpeechRecognitionAlternative {
-  transcript: string;
-  confidence: number;
+interface SpeechRecognitionResultList {
+  length: number;
+  item(index: number): SpeechRecognitionResult;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognitionEvent extends Event {
+  results: SpeechRecognitionResultList;
+  resultIndex: number;
 }
 
 interface SpeechRecognitionErrorEvent extends Event {
   error: string;
   message: string;
-}
-
-interface SpeechRecognitionResultEvent extends Event {
-  results: SpeechRecognitionResultList;
-  resultIndex: number;
 }
 
 declare class SpeechRecognition extends EventTarget {
@@ -32,7 +32,7 @@ declare class SpeechRecognition extends EventTarget {
   lang: string;
   maxAlternatives: number;
   onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => any) | null;
-  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionResultEvent) => any) | null;
+  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null;
   start(): void;
   stop(): void;
   abort(): void;
