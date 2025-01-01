@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Crown, Loader2, Sparkles } from "lucide-react";
-import { AnalysisModule } from "./types";
+import { Brain, ChartBar, Users, TrendingUp } from "lucide-react";
+import type { AnalysisModule } from "./types";
 
 interface ModuleButtonsProps {
   modules: AnalysisModule[];
@@ -8,34 +8,44 @@ interface ModuleButtonsProps {
 }
 
 export const ModuleButtons = ({ modules, onRunModule }: ModuleButtonsProps) => {
+  const getModuleIcon = (moduleId: string) => {
+    switch (moduleId) {
+      case "demographics":
+        return Users;
+      case "market-share":
+        return TrendingUp;
+      case "video-overview":
+        return ChartBar;
+      default:
+        return Brain;
+    }
+  };
+
   return (
-    <div className="grid grid-cols-2 gap-2">
-      {modules.map((module) => (
-        <Button
-          key={module.id}
-          onClick={() => !module.isPro && onRunModule(module.id)}
-          disabled={module.isPro || module.isRunning || module.status === "completed"}
-          className={`relative overflow-hidden ${
-            module.status === "coming-soon" 
-              ? "bg-gradient-to-r from-[#9b87f5] to-[#F97316] text-white"
-              : ""
-          }`}
-        >
-          {module.status === "running" ? (
-            <Loader2 className="w-4 h-4 animate-spin mr-2" />
-          ) : module.isPro ? (
-            <Crown className="w-4 h-4 mr-2" />
-          ) : (
-            <Sparkles className="w-4 h-4 mr-2" />
-          )}
-          {module.name}
-          {module.status === "coming-soon" && (
-            <span className="absolute top-0 right-0 bg-[#F97316] px-2 py-0.5 text-xs rounded-bl-md">
-              Coming Soon
-            </span>
-          )}
-        </Button>
-      ))}
+    <div className="flex flex-wrap gap-2">
+      {modules.map((module) => {
+        const Icon = getModuleIcon(module.id);
+        return (
+          <Button
+            key={module.id}
+            onClick={() => onRunModule(module.id)}
+            disabled={module.isRunning || module.status === "coming-soon"}
+            className={`gap-2 ${
+              module.isRunning
+                ? "bg-[#7E69AB] animate-pulse"
+                : module.status === "coming-soon"
+                ? "bg-gradient-to-r from-[#2A2F3C] to-[#1F2937] opacity-75"
+                : "bg-[#9b87f5] hover:bg-[#7E69AB]"
+            }`}
+          >
+            <Icon className="w-4 h-4" />
+            {module.name}
+            {module.status === "coming-soon" && (
+              <span className="text-xs opacity-75">(Coming Soon)</span>
+            )}
+          </Button>
+        );
+      })}
     </div>
   );
 };
