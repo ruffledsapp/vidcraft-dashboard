@@ -1,42 +1,21 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { SignUpForm } from "@/components/auth/SignUpForm";
+import { GoogleSignIn } from "@/components/auth/GoogleSignIn";
 
 const SignUp = () => {
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [source, setSource] = useState("");
-  const [subscribe, setSubscribe] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleGoogleSignIn = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/dashboard`
-      }
-    });
-
-    if (error) {
-      console.error('Google sign in error:', error);
-      toast({
-        title: "Error signing in",
-        description: "There was a problem signing in with Google. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Form submitted:", { email, name, source, subscribe });
+  const handleSubmit = async (data: {
+    email: string;
+    name: string;
+    source: string;
+    subscribe: boolean;
+  }) => {
+    console.log("Form submitted:", data);
     
     toast({
       title: "Account created successfully!",
@@ -90,80 +69,8 @@ const SignUp = () => {
             </p>
           </div>
 
-          <Button 
-            className="w-full bg-white text-gray-900 border border-gray-300 hover:bg-gray-50"
-            onClick={handleGoogleSignIn}
-          >
-            <img 
-              src="https://www.google.com/favicon.ico" 
-              alt="Google" 
-              className="w-4 h-4 mr-2"
-            />
-            Continue with Google
-          </Button>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
-                Or continue with
-              </span>
-            </div>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
-                <Input
-                  id="name"
-                  placeholder="John Doe"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="john@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="source">How did you find us?</Label>
-                <Input
-                  id="source"
-                  placeholder="Google, Friend, Social Media, etc."
-                  value={source}
-                  onChange={(e) => setSource(e.target.value)}
-                />
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="subscribe"
-                  checked={subscribe}
-                  onCheckedChange={(checked) => setSubscribe(checked as boolean)}
-                />
-                <Label htmlFor="subscribe" className="text-sm">
-                  Keep me updated about new features and announcements
-                </Label>
-              </div>
-            </div>
-
-            <Button type="submit" className="w-full bg-[#9b87f5] hover:bg-[#7E69AB]">
-              Create Account
-            </Button>
-          </form>
+          <GoogleSignIn />
+          <SignUpForm onSubmit={handleSubmit} />
         </div>
       </div>
     </div>
