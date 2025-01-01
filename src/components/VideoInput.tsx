@@ -41,7 +41,7 @@ export const VideoInput = () => {
       const recognition = new SpeechRecognitionImpl();
       recognition.lang = "en-US";
       
-      recognition.onresult = (event: SpeechRecognitionEvent) => {
+      recognition.onresult = (event: SpeechRecognitionResultEvent) => {
         const transcript = event.results[0][0].transcript;
         setVideoUrl(transcript);
         toast({
@@ -50,7 +50,7 @@ export const VideoInput = () => {
         });
       };
 
-      recognition.onerror = () => {
+      recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
         toast({
           title: "Error",
           description: "Could not access microphone. Please check permissions.",
