@@ -3,6 +3,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FloatingTitles from "@/components/FloatingTitles";
 import { AnalysisHistory } from "@/components/AnalysisHistory";
+import { AnalysisPipeline } from "@/components/AnalysisPipeline";
+import { CookieConsent } from "@/components/CookieConsent";
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
 import { useState } from "react";
@@ -79,11 +81,13 @@ const Index = () => {
 
         <div className="container mx-auto flex flex-col items-center gap-12 relative z-10">
           <VideoInput />
+          <AnalysisPipeline />
           <FloatingTitles onTitleClick={(title) => setVideoUrl(title)} />
           <AnalysisHistory />
         </div>
       </div>
       <Footer />
+      <CookieConsent />
     </>
   );
 };
