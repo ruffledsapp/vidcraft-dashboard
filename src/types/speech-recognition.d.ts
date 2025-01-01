@@ -4,16 +4,14 @@ interface SpeechRecognitionAlternative {
 }
 
 interface SpeechRecognitionResult {
-  isFinal: boolean;
-  length: number;
-  item(index: number): SpeechRecognitionAlternative;
   [index: number]: SpeechRecognitionAlternative;
+  length: number;
+  isFinal: boolean;
 }
 
 interface SpeechRecognitionResultList {
-  length: number;
-  item(index: number): SpeechRecognitionResult;
   [index: number]: SpeechRecognitionResult;
+  length: number;
 }
 
 interface SpeechRecognitionEvent extends Event {

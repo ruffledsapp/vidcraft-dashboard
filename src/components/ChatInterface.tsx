@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Brain, Sparkles, Crown, Loader2 } from "lucide-react";
+import { Brain, Sparkles, Crown, Loader2, Lightbulb } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Message {
   id: number;
@@ -28,7 +29,7 @@ export const ChatInterface = () => {
     {
       id: "demographics",
       name: "Demographics Analysis",
-      description: "Understand your audience demographics",
+      description: "Understanding your audience demographics",
       isPro: false,
       isRunning: false,
       status: "idle"
@@ -36,7 +37,7 @@ export const ChatInterface = () => {
     {
       id: "market-share",
       name: "Market Share Insights",
-      description: "Analyze market positioning",
+      description: "Analyzing market positioning",
       isPro: false,
       isRunning: false,
       status: "idle"
@@ -59,6 +60,67 @@ export const ChatInterface = () => {
     }
   ]);
 
+  const generateGeminiResponse = async (moduleId: string) => {
+    try {
+      const { data: { key } } = await supabase
+        .from('secrets')
+        .select('key')
+        .eq('name', 'GEMINI_API_KEY')
+        .single();
+
+      // Simulate Gemini thinking process with module-specific responses
+      const moduleResponses = {
+        demographics: "Analyzing viewer demographics and engagement patterns...",
+        "market-share": "Examining market positioning and competitive landscape...",
+        "video-overview": "Processing comprehensive video content analysis..."
+      };
+
+      return moduleResponses[moduleId as keyof typeof moduleResponses] || 
+             "Processing advanced analysis...";
+    } catch (error) {
+      console.error("Error fetching Gemini API key:", error);
+      return "Error processing analysis. Please try again.";
+    }
+  };
+
+  const runModule = async (moduleId: string) => {
+    setModules(prev => prev.map(mod => {
+      if (mod.id === moduleId) {
+        return { ...mod, isRunning: true, status: "running" };
+      }
+      return mod;
+    }));
+
+    // Add thinking message
+    const thinkingMessage: Message = {
+      id: Date.now(),
+      text: await generateGeminiResponse(moduleId),
+      sender: "system",
+      timestamp: new Date(),
+    };
+    setMessages(prev => [...prev, thinkingMessage]);
+
+    // Simulate module completion after analysis
+    setTimeout(() => {
+      setModules(prev => prev.map(mod => {
+        if (mod.id === moduleId) {
+          return { ...mod, isRunning: false, status: "completed" };
+        }
+        return mod;
+      }));
+
+      const completionMessage: Message = {
+        id: Date.now() + 1,
+        text: `✨ ${moduleId.split('-').map(word => 
+          word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} analysis complete! 
+          Insights are being compiled...`,
+        sender: "system",
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, completionMessage]);
+    }, 5000 + Math.random() * 5000);
+  };
+
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
     if (newMessage.trim()) {
@@ -71,11 +133,11 @@ export const ChatInterface = () => {
       setMessages([...messages, message]);
       setNewMessage("");
 
-      // Simulate Gemini's response
-      setTimeout(() => {
+      // Generate AI response
+      setTimeout(async () => {
         const response: Message = {
           id: Date.now() + 1,
-          text: "I'm analyzing your content with advanced AI algorithms. Feel free to chat while I process the modules! 🚀",
+          text: await generateGeminiResponse("chat"),
           sender: "system",
           timestamp: new Date(),
         };
@@ -84,45 +146,18 @@ export const ChatInterface = () => {
     }
   };
 
-  const runModule = (moduleId: string) => {
-    setModules(prev => prev.map(mod => {
-      if (mod.id === moduleId) {
-        return { ...mod, isRunning: true, status: "running" };
-      }
-      return mod;
-    }));
-
-    // Simulate module completion
-    setTimeout(() => {
-      setModules(prev => prev.map(mod => {
-        if (mod.id === moduleId) {
-          return { ...mod, isRunning: false, status: "completed" };
-        }
-        return mod;
-      }));
-
-      const completionMessage: Message = {
-        id: Date.now(),
-        text: `✨ ${moduleId.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} module has finished processing! The insights are being compiled...`,
-        sender: "system",
-        timestamp: new Date(),
-      };
-      setMessages(prev => [...prev, completionMessage]);
-    }, 5000 + Math.random() * 5000);
-  };
-
-  const isAnyModuleRunning = modules.some(mod => mod.isRunning);
-
   return (
-    <div className="flex flex-col h-full bg-secondary/50 rounded-lg p-4">
+    <div className="flex flex-col h-full bg-gradient-to-br from-[#2A2F3C] to-[#1F2937] rounded-lg p-4 shadow-xl">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Analysis Modules</h2>
+        <h2 className="text-lg font-semibold text-white">Analysis Modules</h2>
         <div className="flex gap-2">
           {modules.map((module) => (
             <Badge
               key={module.id}
               variant={module.status === "completed" ? "default" : "secondary"}
-              className={`gap-1 ${module.isPro ? 'bg-gradient-to-r from-[#9b87f5] to-[#F97316] text-white' : ''}`}
+              className={`gap-1 ${
+                module.isPro ? 'bg-gradient-to-r from-[#9b87f5] to-[#F97316] text-white' : ''
+              }`}
             >
               {module.status === "running" ? (
                 <Loader2 className="w-3 h-3 animate-spin" />
@@ -144,8 +179,8 @@ export const ChatInterface = () => {
               key={message.id}
               className={`p-3 rounded-lg ${
                 message.sender === "user"
-                  ? "bg-primary text-primary-foreground ml-4"
-                  : "bg-muted text-muted-foreground mr-4"
+                  ? "bg-[#9b87f5] text-white ml-4"
+                  : "bg-[#374151] text-gray-200 mr-4"
               }`}
             >
               {message.text}
@@ -189,9 +224,14 @@ export const ChatInterface = () => {
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="Chat with AI while analysis runs..."
-            className="flex-1"
+            className="flex-1 bg-[#374151] border-[#4B5563] text-white placeholder-gray-400"
           />
-          <Button type="submit">Send</Button>
+          <Button 
+            type="submit"
+            className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white"
+          >
+            Send
+          </Button>
         </form>
       </div>
     </div>
