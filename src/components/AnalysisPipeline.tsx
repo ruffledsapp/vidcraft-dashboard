@@ -10,7 +10,7 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Upload, Brain, ChartBar, Lock } from 'lucide-react';
+import { Sparkles, Upload, Brain, ChartBar, Lock, Crown } from 'lucide-react';
 
 const initialNodes = [
   {
