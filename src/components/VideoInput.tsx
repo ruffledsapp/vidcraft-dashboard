@@ -7,7 +7,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { AuthOverlay } from "./AuthOverlay";
 import { useSession } from "@supabase/auth-helpers-react";
 
-const DEFAULT_VIDEO = "https://www.youtube.com/watch?v=vsMydMDi3rI";
+// Randy Pausch's Last Lecture
+const DEFAULT_VIDEO = "https://www.youtube.com/watch?v=ji5_MqicxSo";
 
 export const VideoInput = () => {
   const [videoUrl, setVideoUrl] = useState(DEFAULT_VIDEO);
@@ -31,7 +32,9 @@ export const VideoInput = () => {
 
   const startVoiceInput = async () => {
     try {
-      const recognition = new (window.webkitSpeechRecognition || window.SpeechRecognition)();
+      // Fix TypeScript error by declaring the type
+      const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
       recognition.lang = "en-US";
       
       recognition.onresult = (event) => {
