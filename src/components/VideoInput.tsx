@@ -32,12 +32,15 @@ export const VideoInput = () => {
 
   const startVoiceInput = async () => {
     try {
-      // Fix TypeScript error by declaring the type
-      const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+        throw new Error("Speech recognition is not supported in this browser");
+      }
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       const recognition = new SpeechRecognition();
       recognition.lang = "en-US";
       
-      recognition.onresult = (event) => {
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
         const transcript = event.results[0][0].transcript;
         setVideoUrl(transcript);
         toast({
