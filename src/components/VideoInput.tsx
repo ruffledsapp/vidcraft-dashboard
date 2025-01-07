@@ -41,9 +41,9 @@ export const VideoInput = () => {
       const recognition = new SpeechRecognitionImpl();
       recognition.lang = "en-US";
       
-      recognition.onresult = function(this: SpeechRecognition, event: SpeechRecognitionEvent) {
-        console.log("Speech recognition result received:", event);
-        const lastResult = event.results[event.results.length - 1];
+      recognition.onresult = function(this: SpeechRecognition, ev: SpeechRecognitionEvent) {
+        console.log("Speech recognition result received:", ev);
+        const lastResult = ev.results[ev.results.length - 1];
         if (lastResult && lastResult[0]) {
           const transcript = lastResult[0].transcript;
           setVideoUrl(transcript);
@@ -54,11 +54,11 @@ export const VideoInput = () => {
         }
       };
 
-      recognition.onerror = function(this: SpeechRecognition, event: SpeechRecognitionErrorEvent) {
-        console.error("Speech recognition error:", event.error);
+      recognition.onerror = function(this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) {
+        console.error("Speech recognition error:", ev.error);
         toast({
           title: "Error",
-          description: `Speech recognition error: ${event.error}`,
+          description: `Speech recognition error: ${ev.error}`,
           variant: "destructive",
         });
       };
