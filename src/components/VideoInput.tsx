@@ -41,7 +41,7 @@ export const VideoInput = () => {
       const recognition = new SpeechRecognitionImpl();
       recognition.lang = "en-US";
       
-      recognition.onresult = (event: SpeechRecognitionEvent) => {
+      recognition.onresult = function(this: SpeechRecognition, event: SpeechRecognitionEvent) {
         const lastResult = event.results[event.results.length - 1];
         if (lastResult && lastResult[0]) {
           const transcript = lastResult[0].transcript;
@@ -53,7 +53,7 @@ export const VideoInput = () => {
         }
       };
 
-      recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+      recognition.onerror = function(this: SpeechRecognition, event: SpeechRecognitionErrorEvent) {
         toast({
           title: "Error",
           description: `Speech recognition error: ${event.error}`,
