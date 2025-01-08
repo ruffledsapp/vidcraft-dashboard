@@ -90,10 +90,13 @@ const initialEdges = [
 ];
 
 // Custom Node Component
-const CustomNode = ({ data }) => {
+const CustomNode = ({ data, id, onNodeClick }) => {
   const Icon = data.icon;
   return (
-    <div className="p-4 text-center">
+    <div 
+      className={`p-4 text-center cursor-pointer transition-all duration-300`}
+      onClick={() => onNodeClick(id)}
+    >
       <div className="flex items-center justify-center mb-2">
         <Icon className="w-6 h-6 text-muted-foreground" />
       </div>
@@ -121,14 +124,26 @@ const nodeTypes = {
   custom: CustomNode,
 };
 
-export const AnalysisPipeline = () => {
+export const AnalysisPipeline = ({ onModuleSelect }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
   );
+
+  const handleNodeClick = (nodeId: string) => {
+    if (onModuleSelect) {
+      onModuleSelect(nodeId);
+      setSelectedNodes(prev => 
+        prev.includes(nodeId) 
+          ? prev.filter(id => id !== nodeId)
+          : [...prev, nodeId]
+      );
+    }
+  };
 
   return (
     <div className="h-[500px] w-full bg-background rounded-lg border border-border">
@@ -149,6 +164,14 @@ export const AnalysisPipeline = () => {
             return node.data.status === 'locked' ? '#64748b' : '#9b87f5';
           }}
         />
+        {nodes.map((node) => (
+          <CustomNode 
+            key={node.id} 
+            data={node.data} 
+            id={node.id} 
+            onNodeClick={handleNodeClick} 
+          />
+        ))}
       </ReactFlow>
     </div>
   );

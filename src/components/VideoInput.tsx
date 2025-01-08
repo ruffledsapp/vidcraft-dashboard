@@ -2,12 +2,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
-import { Mic, Upload, Sparkles, Video } from "lucide-react";
+import { Upload, Video } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { AuthOverlay } from "./AuthOverlay";
 import { useSession } from "@supabase/auth-helpers-react";
 
-// Randy Pausch's Last Lecture
 const DEFAULT_VIDEO = "https://www.youtube.com/watch?v=ji5_MqicxSo";
 
 export const VideoInput = () => {
@@ -30,53 +29,8 @@ export const VideoInput = () => {
     }
   };
 
-  const startVoiceInput = async () => {
-    try {
-      const SpeechRecognitionImpl = window.SpeechRecognition || window.webkitSpeechRecognition;
-      
-      if (!SpeechRecognitionImpl) {
-        throw new Error("Speech recognition is not supported in this browser");
-      }
-
-      const recognition = new SpeechRecognitionImpl();
-      recognition.lang = "en-US";
-      
-      recognition.onresult = function(this: SpeechRecognition, ev: SpeechRecognitionEvent) {
-        console.log("Speech recognition result received:", ev);
-        const lastResult = ev.results[ev.results.length - 1];
-        if (lastResult && lastResult[0]) {
-          const transcript = lastResult[0].transcript;
-          setVideoUrl(transcript);
-          toast({
-            title: "Voice Input Received",
-            description: "Your speech has been converted to text!",
-          });
-        }
-      };
-
-      recognition.onerror = function(this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) {
-        console.error("Speech recognition error:", ev.error);
-        toast({
-          title: "Error",
-          description: `Speech recognition error: ${ev.error}`,
-          variant: "destructive",
-        });
-      };
-
-      recognition.start();
-    } catch (error) {
-      console.error("Speech recognition error:", error);
-      toast({
-        title: "Error",
-        description: "Speech recognition is not supported in this browser.",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
     <div className="w-full max-w-3xl space-y-8 animate-fade-in relative">
-      {/* Brutalist Title with Glitch Effect */}
       <div 
         className="relative font-mono transform -rotate-1"
         onMouseEnter={() => setIsHovered(true)}
@@ -92,35 +46,20 @@ export const VideoInput = () => {
             <span className="relative text-white">SITCH</span>
           </span>
         </h1>
-        {isHovered && (
-          <div className="absolute -top-4 right-0 animate-bounce">
-            <Sparkles className="w-8 h-8 text-[#9b87f5]" />
-          </div>
-        )}
       </div>
 
-      {/* Brutalist Form */}
       <form onSubmit={handleSubmit} className="space-y-8 relative">
         <div className="flex gap-2 transform hover:rotate-0.5 transition-transform">
           <div className="relative flex-1">
             <Input
               type="text"
-              placeholder="Enter YouTube video URL or speak your search"
+              placeholder="Enter YouTube video URL"
               value={videoUrl}
               onChange={(e) => setVideoUrl(e.target.value)}
               className="h-14 text-lg bg-[#2A2F3C] border-[#7E69AB]/30 pl-12"
             />
             <Video className="absolute left-4 top-4 text-muted-foreground" />
           </div>
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            onClick={startVoiceInput}
-            className="h-14 w-14 border-[#7E69AB]/30 hover:border-[#9b87f5] hover:bg-[#2A2F3C] transition-colors"
-          >
-            <Mic className="h-6 w-6" />
-          </Button>
           <Button 
             type="submit" 
             className="h-14 px-8 bg-[#9b87f5] hover:bg-[#7E69AB] transition-all transform hover:translate-x-0.5 hover:-translate-y-0.5"
@@ -130,14 +69,6 @@ export const VideoInput = () => {
           </Button>
         </div>
       </form>
-
-      {/* Floating Elements */}
-      <div className="absolute -right-20 top-0 rotate-12 opacity-20 pointer-events-none">
-        <div className="w-40 h-40 border-4 border-[#9b87f5] animate-pulse" />
-      </div>
-      <div className="absolute -left-16 bottom-0 -rotate-6 opacity-20 pointer-events-none">
-        <div className="w-32 h-32 bg-[#F97316] mix-blend-overlay animate-bounce" />
-      </div>
 
       {showPreview && !session && <AuthOverlay />}
     </div>
