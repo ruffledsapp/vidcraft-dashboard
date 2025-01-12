@@ -7,6 +7,8 @@ import {
   useNodesState,
   useEdgesState,
   addEdge,
+  Node,
+  NodeProps,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { Badge } from '@/components/ui/badge';
@@ -89,12 +91,22 @@ const initialEdges = [
   },
 ];
 
-// Custom Node Component
-const CustomNode = ({ data, id, onNodeClick }) => {
+interface CustomNodeProps extends NodeProps {
+  data: {
+    label: string;
+    icon: any;
+    description: string;
+    status: string;
+    isPro?: boolean;
+  };
+  onNodeClick: (id: string) => void;
+}
+
+const CustomNode = ({ data, id, onNodeClick }: CustomNodeProps) => {
   const Icon = data.icon;
   return (
     <div 
-      className={`p-4 text-center cursor-pointer transition-all duration-300`}
+      className="p-4 text-center cursor-pointer transition-all duration-300"
       onClick={() => onNodeClick(id)}
     >
       <div className="flex items-center justify-center mb-2">
@@ -121,10 +133,14 @@ const CustomNode = ({ data, id, onNodeClick }) => {
 };
 
 const nodeTypes = {
-  custom: CustomNode,
+  custom: CustomNode as any, // Type assertion to fix compatibility issue
 };
 
-export const AnalysisPipeline = ({ onModuleSelect }) => {
+interface AnalysisPipelineProps {
+  onModuleSelect?: (moduleId: string) => void;
+}
+
+export const AnalysisPipeline = ({ onModuleSelect }: AnalysisPipelineProps) => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
@@ -164,14 +180,6 @@ export const AnalysisPipeline = ({ onModuleSelect }) => {
             return node.data.status === 'locked' ? '#64748b' : '#9b87f5';
           }}
         />
-        {nodes.map((node) => (
-          <CustomNode 
-            key={node.id} 
-            data={node.data} 
-            id={node.id} 
-            onNodeClick={handleNodeClick} 
-          />
-        ))}
       </ReactFlow>
     </div>
   );

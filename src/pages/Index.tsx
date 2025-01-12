@@ -2,8 +2,8 @@ import { VideoInput } from "@/components/VideoInput";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FloatingTitles from "@/components/FloatingTitles";
-import { AnalysisHistory } from "@/components/AnalysisHistory";
 import { AnalysisPipeline } from "@/components/AnalysisPipeline";
+import { AnalysisHistory } from "@/components/AnalysisHistory";
 import { CookieConsent } from "@/components/CookieConsent";
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
@@ -26,6 +26,11 @@ const Index = () => {
     if (error) {
       console.error('Google sign in error:', error);
     }
+  };
+
+  const handleModuleSelect = (moduleId: string) => {
+    console.log('Selected module:', moduleId);
+    // Add any module selection logic here
   };
 
   return (
@@ -81,7 +86,7 @@ const Index = () => {
 
         <div className="container mx-auto flex flex-col items-center gap-12 relative z-10">
           <VideoInput />
-          <AnalysisPipeline />
+          <AnalysisPipeline onModuleSelect={handleModuleSelect} />
           <FloatingTitles onTitleClick={(title) => setVideoUrl(title)} />
           <AnalysisHistory />
         </div>
